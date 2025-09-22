@@ -56,6 +56,8 @@ Largest Contentful Paint (LCP) drives perceived load. Heavy/non-responsive image
     style={{ width: '100%', height: 'auto', objectFit: 'cover', display: 'block' }}
   />
 ```
+---
+
 ### Stabilize layout (CLS ≈ 0)
 - The hero **does not** impose a conflicting `aspect-ratio`; the `<img>`’s **intrinsic** `width/height` reserve space on first paint → no jumps.
 - Cards (thumbs) include explicit `width/height`, and their media wrapper uses `aspect-ratio: 16/9` to keep the grid stable.
