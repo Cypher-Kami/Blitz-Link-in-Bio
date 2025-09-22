@@ -40,7 +40,7 @@ Largest Contentful Paint (LCP) drives perceived load. Heavy/non-responsive image
 
 - **Serve LCP as next-gen + responsive**  
   Use **WebP** (or AVIF) with `srcset`/`sizes` so mobile downloads an appropriately sized resource.
-  ```tsx
+```tsx
   // HeroAfter.tsx — key for LCP
   <img
     src={withBase('hero-1200.webp')}
