@@ -7,73 +7,73 @@
 
 ## Why this matters
 
-The Largest Contentful Paint (LCP) is what users perceive as “the page has arrived.” Heavy/non-responsive images delay LCP, and missing dimensions cause layout shifts (CLS). By shipping next-gen formats, responsive variants, and explicit dimensions, we cut bytes, prioritize the right resource, and stabilize layout.
+Largest Contentful Paint (LCP) drives perceived load. Heavy/non-responsive images delay LCP; missing dimensions cause layout shifts (CLS). Using next-gen formats, responsive variants, and explicit dimensions cuts bytes, prioritizes the right resource, and stabilizes layout.
 
 ---
 
-## Before vs After (Lighthouse - Production build)
+## Before vs After (Lighthouse — **Mobile**, Production build)
 
-**URLs**
-- **Before (JPG):** `/?variant=before`  
-- **After (WebP):** `/?variant=after`
+**Local URLs (con base de Pages):**
+- **Before (JPG):** `http://localhost:4173/Blitz-Link-in-Bio/?variant=before`  
+- **After (WebP):** `http://localhost:4173/Blitz-Link-in-Bio/?variant=after`
 
 ### Scores
 | Variant         | Performance | Accessibility | Best Practices | SEO |
 |-----------------|------------:|--------------:|---------------:|----:|
-| **Before (JPG)**|          88 |           100 |            100 |  83 |
-| **After (WebP)**|       **100** |           100 |            100 |  83 |
+| **Before (JPG)**|          **69** |           100 |            100 |  **91** |
+| **After (WebP)**|       **100** |           100 |            100 |  **91** |
 
 ### Core Web Vitals / Metrics
 | Metric | Before (JPG) | After (WebP) | Δ (Improvement) |
 |-------:|--------------:|-------------:|----------------:|
-| **FCP** | 0.3 s | **0.3 s** | — |
-| **LCP** | 0.8 s | **0.3 s** | **-0.5 s** |
+| **FCP** | 1.2 s | **1.2 s** | — |
+| **LCP** | 5.3 s | **1.5 s** | **−3.8 s** |
 | **TBT** | 0 ms | **0 ms** | — |
-| **CLS** | 0.231 | **0.000** | **-0.231** |
-| **Speed Index** | 0.3 s | **0.3 s** | — |
+| **CLS** | 0.228 | **0.000** | **−0.228** |
+| **Speed Index** | 1.2 s | **1.2 s** | — |
 
-> **Takeaway:** The **After** variant dramatically reduces **LCP** (0.8 s → **0.3 s**) and eliminates **layout shifts** (CLS 0.231 → **0.000**), achieving **Performance 100**.
+> **Takeaway:** The **After** variant slashes **LCP** (5.3 → **1.5 s**) and eliminates layout shifts (**CLS 0.228 → 0.000**), achieving **Performance 100** on mobile.
 
 ---
 
 ## What changed (code & rationale)
 
 - **Serve LCP as next-gen + responsive**  
-  Use **WebP** (or AVIF) with `srcset`/`sizes` so mobile downloads an appropriately sized resource instead of an oversized one.
-
-```tsx
-// HeroAfter.tsx — key for LCP
-<img
-  src="/hero-1200.webp"
-  srcSet="/hero-600.webp 600w, /hero-900.webp 900w, /hero-1200.webp 1200w"
-  sizes="(max-width: 480px) 100vw, (max-width: 768px) 640px, 640px"
-  width={1200}
-  height={400}
-  alt="Hero after (WebP)"
-  loading="eager"
-  fetchPriority="high"
-  decoding="async"
-  style={{ width: "100%", height: "auto", objectFit: "cover", display: "block" }}
-/>
+  Use **WebP** (or AVIF) with `srcset`/`sizes` so mobile downloads an appropriately sized resource.
+  ```tsx
+  // HeroAfter.tsx — key for LCP
+  <img
+    src={withBase('hero-1200.webp')}
+    srcSet={[
+      `${withBase('hero-600.webp')} 600w`,
+      `${withBase('hero-900.webp')} 900w`,
+      `${withBase('hero-1200.webp')} 1200w`,
+    ].join(', ')}
+    sizes="(max-width: 480px) 100vw, (max-width: 768px) 640px, 640px"
+    width={1200} height={400}
+    alt="Hero after (WebP)"
+    loading="eager" fetchPriority="high" decoding="async"
+    style={{ width: '100%', height: 'auto', objectFit: 'cover', display: 'block' }}
+  />
 ```
-Stabilize layout (CLS ≈ 0)
-The hero container does not enforce a conflicting aspect-ratio; the <img>’s width/height reserve space from the first layout. Thumbs also include width/height and their container uses a fixed aspect-ratio: 16/9.
+### Stabilize layout (CLS ≈ 0)
+- The hero **does not** impose a conflicting `aspect-ratio`; the `<img>`’s **intrinsic** `width/height` reserve space on first paint → no jumps.
+- Cards (thumbs) include explicit `width/height`, and their media wrapper uses `aspect-ratio: 16/9` to keep the grid stable.
 
-Lazy non-critical media
-Non-LCP images (thumbs) use loading="lazy" + decoding="async"; the hero is the only eager/prioritized image.
+### Lazy non-critical media
+- Only the **hero** is `loading="eager"` with `fetchpriority="high"`.
+- All other images (thumbs) are `loading="lazy"` + `decoding="async"` to reduce main-thread work and bandwidth.
 
-Fair test
-Before serves only JPG (no sizes), After serves only WebP with responsive variants. We never render both variants at once to avoid skewing Lighthouse.
+### Fair A/B test
+- **Before:** JPG only (no `sizes`), intentionally less optimized.
+- **After:** WebP (or AVIF) with `srcset`/`sizes`.
+- Each variant renders **exclusively** (we don’t ship both at once) to avoid skewing Lighthouse.
 
 ---
 
 ## How to run
-- npm i
-- npm run build
-- npm run preview
-
----
-
-# Measure each URL independently:
-## BEFORE → http://localhost:4173/?variant=before
-## AFTER  → http://localhost:4173/?variant=after
+```bash
+npm i
+npm run build
+npm run preview
+```
