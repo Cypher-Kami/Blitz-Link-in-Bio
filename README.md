@@ -65,7 +65,7 @@ Non-LCP images (thumbs) use loading="lazy" + decoding="async"; the hero is the o
 Fair test
 Before serves only JPG (no sizes), After serves only WebP with responsive variants. We never render both variants at once to avoid skewing Lighthouse.
 
-##How to run
+## How to run
 npm i
 npm run build
 npm run preview
