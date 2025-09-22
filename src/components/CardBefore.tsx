@@ -1,3 +1,4 @@
+import { withBase } from '../lib/asset';
 import type { Item } from "../data";
 
 export function CardBefore({ item }: { item: Item }) {
@@ -5,9 +6,9 @@ export function CardBefore({ item }: { item: Item }) {
     <div className="card">
       <div className="card-media">
         <img
-          src={item.jpg600}
+          src={withBase(item.jpg600)}
           alt=""
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
         />
       </div>
       <div className="card-body">
