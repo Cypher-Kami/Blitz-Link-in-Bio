@@ -55,6 +55,7 @@ The Largest Contentful Paint (LCP) is what users perceive as “the page has arr
   decoding="async"
   style={{ width: "100%", height: "auto", objectFit: "cover", display: "block" }}
 />
+```
 Stabilize layout (CLS ≈ 0)
 The hero container does not enforce a conflicting aspect-ratio; the <img>’s width/height reserve space from the first layout. Thumbs also include width/height and their container uses a fixed aspect-ratio: 16/9.
 
