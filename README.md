@@ -11,7 +11,7 @@ The Largest Contentful Paint (LCP) is what users perceive as “the page has arr
 
 ---
 
-## Before vs After (Lighthouse • Mobile • Production build)
+## Before vs After (Lighthouse - Production build)
 
 **URLs**
 - **Before (JPG):** `/?variant=before`  
@@ -65,11 +65,15 @@ Non-LCP images (thumbs) use loading="lazy" + decoding="async"; the hero is the o
 Fair test
 Before serves only JPG (no sizes), After serves only WebP with responsive variants. We never render both variants at once to avoid skewing Lighthouse.
 
+---
+
 ## How to run
-npm i
-npm run build
-npm run preview
+- npm i
+- npm run build
+- npm run preview
+
+---
 
 # Measure each URL independently:
-# BEFORE → http://localhost:4173/?variant=before
-# AFTER  → http://localhost:4173/?variant=after
+## BEFORE → http://localhost:4173/?variant=before
+## AFTER  → http://localhost:4173/?variant=after
